@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- TAG DE DESCRIÇÃO PARA O GOOGLE -->
+  <meta name="description" content="Site de Dicas de Jogos e Otimizador de Bateria - Encontre os melhores tutoriais, dicas de performance e ferramentas para seu celular.">
+  
+  <title>TurboBattery Pro - Pegadinha de Bateria & Dicas</title>
+  
+  <!-- Fontes do Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+  
+  <!-- ESTILOS CSS -->
+  <style>
+    :root {
+      --bg-page: #f8fafc;
+      --card-bg: #ffffff;
+      --card-border: #e2e8f0;
+      
+      --primary: #10b981;
+      --primary-hover: #059669;
+      --accent-blue: #2563eb;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      
+      --text-primary: #0f172a;
+      --text-secondary: #64748b;
+      
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.07), 0 10px 15px -10px rgba(0, 0, 0, 0.04);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      background-color: var(--bg-page);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* TELA DE APAGÃO TOTAL (PRETO 100%) */
+    #blackoutScreen {
+      position: fixed;
+      inset: 0;
+      background-color: #000000;
+      z-index: 9999999;
+    }
+
+    /* CONTAINER DE LISTRAS CORTADAS */
+    #stripeGlitchContainer {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    /* LISTRAS PRETAS CORTADAS COM NÚMEROS VERDES */
+    .glitch-stripe {
+      position: absolute;
+      background-color: #000000;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.9);
+      pointer-events: none;
+      animation: stripeFlicker 0.1s infinite alternate;
+      color: #00ff66;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      letter-spacing: 2px;
+      text-shadow: 0 0 8px #00ff66;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    @keyframes stripeFlicker {
+      0% { opacity: 0.9; transform: scaleY(1); }
+      50% { opacity: 0.4; }
+      100% { opacity: 1; transform: scaleY(1.05); }
+    }
+
+    /* CANVAS DO EFEITO MATRIX */
+    #matrixCanvas {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000000;
+      z-index: 99998;
+      display: none;
+    }
+
+    #matrixCanvas.active {
+      display: block;
+    }
+
+    /* CAIXA DE MENSAGEM DA PEGADINHA */
+    #messageOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      padding: 20px;
+    }
+
+    .message-content {
+      color: #10b981;
+      text-align: center;
+      padding: 35px 25px;
+      border: 2px solid #10b981;
+      background: rgba(0, 0, 0, 0.95);
+      max-width: 380px;
+      width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 0 35px rgba(16, 185, 129, 0.5);
+      font-family: var(--font-mono);
+    }
+
+    .message-content p {
+      color: #ffffff;
+      font-size: 0.95rem;
+      line-height: 1.5;
+      font-family: var(--font-sans);
+      font-weight: 600;
+    }
+
+    .glitch-text {
+      font-size: 2rem;
+      margin-bottom: 16px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      animation: blink 0.35s infinite alternate;
+    }
+
+    @keyframes blink {
+      0% { opacity: 1; }
+      100% { opacity: 0.2; }
+    }
+
+    /* TELA DE BLOQUEIO */
+    .blocked-screen {
+      position: fixed;
+      inset: 0;
+      background-color: #ffffff;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      z-index: 9999;
+    }
+
+    .blocked-screen.active {
+      display: flex;
+    }
+
+    .blocked-card {
+      background: #ffffff;
+      border: 1px solid var(--card-border);
+      border-radius: 32px;
+      padding: 40px 28px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(239, 68, 68, 0.15);
+    }
+
+    .prohibited-icon {
+      margin-bottom: 20px;
+      animation: pulseIcon 2s infinite ease-in-out;
+    }
+
+    @keyframes pulseIcon {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+
+    .blocked-card h2 {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+    }
+
+    .blocked-card p {
+      font-size: 0.95rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .blocked-tag {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.08);
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    /* APP PRINCIPAL */
+    .app-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 32px;
+      padding: 32px 28px;
+      width: 100%;
+      max-width: 390px;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .app-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      background: rgba(16, 185, 129, 0.1);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .brand h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .sub-brand {
+      font-size: 0.725rem;
+      color: var(--text-secondary);
+    }
+
+    .badge-status {
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--primary);
+      background: rgba(16, 185, 129, 0.1);
+      padding: 6px 10px;
+      border-radius: 20px;
+    }
+
+    .battery-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 0;
+    }
+
+    .battery-ring {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .progress-ring {
+      transform: rotate(-90deg);
+    }
+
+    .ring-bg {
+      fill: none;
+      stroke: #f1f5f9;
+      stroke-width: 14;
+    }
+
+    .ring-fill {
+      fill: none;
+      stroke: var(--warning);
+      stroke-width: 14;
+      stroke-linecap: round;
+      stroke-dasharray: 534;
+      stroke-dashoffset: 352;
+      transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1), stroke 0.5s ease;
+    }
+
+    .battery-content {
+      position: absolute;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .percent {
+      font-family: var(--font-mono);
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+    }
+
+    .status-label {
+      font-size: 0.825rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .stat-card {
+      background: #f8fafc;
+      border: 1px solid var(--card-border);
+      padding: 12px 14px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stat-icon {
+      font-size: 1.3rem;
+    }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label {
+      font-size: 0.675rem;
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .btn-optimize {
+      position: relative;
+      width: 100%;
+      padding: 20px 16px;
+      background: linear-gradient(135deg, #10b981, #059669);
+      border: none;
+      border-radius: 20px;
+      color: #ffffff;
+      cursor: pointer;
+      box-shadow: 0 12px 25px -5px rgba(16, 185, 129, 0.4);
+      transition: all 0.25s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-optimize:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 16px 30px -5px rgba(16, 185, 129, 0.5);
+    }
+
+    .btn-text {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+    }
+
+    .btn-subtext {
+      font-size: 0.75rem;
+      opacity: 0.9;
+    }
+
+    /* MODAL / CARREGAMENTO */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 32px;
+      padding: 36px 28px;
+      width: 100%;
+      max-width: 360px;
+      text-align: center;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      position: relative;
+    }
+
+    .hyper-loader {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 24px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .orbit {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 3px solid transparent;
+    }
+
+    .ring-1 {
+      border-top-color: var(--primary);
+      animation: spin 1s linear infinite;
+    }
+
+    .ring-2 {
+      inset: 8px;
+      border-right-color: var(--accent-blue);
+      animation: spinReverse 0.8s linear infinite;
+    }
+
+    .ring-3 {
+      inset: 16px;
+      border-bottom-color: var(--warning);
+      animation: spin 1.4s linear infinite;
+    }
+
+    .center-bolt {
+      font-size: 1.8rem;
+      animation: pulseBolt 0.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes spinReverse { 100% { transform: rotate(-360deg); } }
+    @keyframes pulseBolt { 0% { transform: scale(0.8); } 100% { transform: scale(1.2); } }
+
+    .process-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      line-height: 1.3;
+    }
+
+    .process-step {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      min-height: 40px;
+      margin-bottom: 20px;
+    }
+
+    .progress-wrapper {
+      width: 100%;
+      height: 12px;
+      background: #f1f5f9;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2563eb, #10b981);
+      transition: width 0.1s linear;
+    }
+
+    .process-percent {
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .prank-alert {
+      margin-top: 16px;
+      background: #000000;
+      border: 2px solid var(--primary);
+      padding: 14px;
+      border-radius: 16px;
+      color: #00ff66;
+      font-weight: 800;
+      font-size: 0.825rem;
+      line-height: 1.4;
+      text-transform: uppercase;
+      animation: pulseGreen 0.5s infinite alternate;
+    }
+
+    @keyframes pulseGreen {
+      0% { opacity: 0.85; }
+      100% { opacity: 1; }
+    }
+
+    .btn-done {
+      width: 100%;
+      padding: 14px;
+      margin-top: 20px;
+      background: var(--primary);
+      border: none;
+      border-radius: 14px;
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    /* NOTIFICAÇÃO DO SISTEMA */
+    .system-toast {
+      position: fixed;
+      top: -140px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      max-width: 380px;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(16, 185, 129, 0.5);
+      border-left: 5px solid var(--primary);
+      border-radius: 20px;
+      padding: 14px 16px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 20px rgba(16, 185, 129, 0.15);
+      z-index: 10000;
+      transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .system-toast.active {
+      top: 16px;
+    }
+
+    .toast-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .toast-icon {
+      font-size: 0.85rem;
+    }
+
+    .toast-title {
+      color: #94a3b8;
+      font-weight: 700;
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .toast-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toast-alert-title {
+      color: var(--primary);
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    .toast-body {
+      color: #f8fafc;
+      font-size: 0.78rem;
+      font-weight: 500;
+      line-height: 1.35;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CANVAS DO EFEITO MATRIX (FUNDO) -->
+  <canvas id="matrixCanvas"></canvas>
+
+  <!-- TELA DE APAGÃO TOTAL (PRETA POR 10 SEGUNDOS) -->
+  <div id="blackoutScreen" class="hidden"></div>
+
+  <!-- CONTAINER DE LISTRAS PRETAS CORTADAS -->
+  <div id="stripeGlitchContainer" class="hidden"></div>
+
+  <!-- MENSAGEM DA PEGADINHA -->
+  <div id="messageOverlay" class="hidden">
+    <div class="message-content">
+      <h2 class="glitch-text">PEGADINHA! 😂</h2>
+      <p>Sua bateria foi 100% turbinada com sucesso! Esse foi apenas um teste de velocidade para ver a sua reação!</p>
+    </div>
+  </div>
+
+  <!-- TELA DE BLOQUEIO / MANUTENÇÃO -->
+  <div id="blockedScreen" class="blocked-screen">
+    <div class="blocked-card">
+      <div class="prohibited-icon">
+        <svg width="84" height="84" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+        </svg>
+      </div>
+      <h2>Acesso Suspenso</h2>
+      <p id="blockedMessage">Este aplicativo foi temporariamente bloqueado para atualizações críticas de segurança e otimização do sistema.</p>
+      <span class="blocked-tag">SISTEMA EM MANUTENÇÃO</span>
+    </div>
+  </div>
+
+  <!-- APLICATIVO PRINCIPAL -->
+  <main id="mainApp" class="app-card">
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">⚡</div>
+        <div>
+          <h2>PowerBoost</h2>
+          <span class="sub-brand">Ultra Battery Saver</span>
+        </div>
+      </div>
+      <span class="badge-status">PRONTO</span>
+    </header>
+
+    <!-- Círculo da Bateria -->
+    <section class="battery-container">
+      <div class="battery-ring">
+        <svg class="progress-ring" width="200" height="200">
+          <circle class="ring-bg" cx="100" cy="100" r="85"></circle>
+          <circle id="ringProgress" class="ring-fill" cx="100" cy="100" r="85"></circle>
+        </svg>
+        <div class="battery-content">
+          <span id="batteryPercent" class="percent">34%</span>
+          <span id="batteryStatus" class="status-label">Bateria Baixa</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Estatísticas -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon">🧠</div>
+        <div class="stat-info">
+          <span class="stat-label">Memória RAM Real</span>
+          <span id="ramUsage" class="stat-value">Lendo...</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-info">
+          <span class="stat-label">Temperatura</span>
+          <span id="tempValue" class="stat-value">37.8 °C</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Botão Principal -->
+    <section class="action-section">
+      <button id="optimizeBtn" class="btn-optimize">
+        <span class="btn-text">OTIMIZAR BATERIA AGORA</span>
+        <span class="btn-subtext">Liberar RAM & Aumentar Durabilidade</span>
+      </button>
+    </section>
+  </main>
+
+  <!-- MODAL DA PEGADINHA -->
+  <div id="modalOverlay" class="modal-overlay">
+    <div id="modalCard" class="modal-card">
+      
+      <div class="hyper-loader">
+        <div class="orbit ring-1"></div>
+        <div class="orbit ring-2"></div>
+        <div class="orbit ring-3"></div>
+        <div class="center-bolt">⚡</div>
+      </div>
+
+      <h3 id="processTitle" class="process-title">Otimizando Bateria...</h3>
+      <p id="processStep" class="process-step">Iniciando varredura de sistema...</p>
+
+      <div class="progress-wrapper">
+        <div id="progressBar" class="progress-bar-fill"></div>
+      </div>
+      <span id="processPercent" class="process-percent">0%</span>
+
+      <!-- Box de Alerta da Pegadinha -->
+      <div id="prankAlert" class="prank-alert" style="display: none;">
+        <p id="prankText">⚡ ATIVANDO MODO SUPER TURBO... OTIMIZANDO MEMÓRIA E BATERIA! (99%)</p>
+      </div>
+
+      <button id="closeModalBtn" class="btn-done" style="display: none;">
+        FECHAR E RIR 😂
+      </button>
+    </div>
+  </div>
+
+  <!-- NOTIFICAÇÃO DO SISTEMA -->
+  <div id="systemToast" class="system-toast">
+    <div class="toast-header">
+      <span class="toast-icon">🛡️</span>
+      <span class="toast-title">SISTEMA • AGORA</span>
+    </div>
+    <div class="toast-content">
+      <strong class="toast-alert-title">⚡ OTIMIZAÇÃO CONCLUÍDA</strong>
+      <p class="toast-body">Ajustes de bateria e memória liberados com sucesso no seu dispositivo!</p>
+    </div>
+  </div>
+
+  <!-- CÓDIGO JAVASCRIPT -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+
+      // ==================================================
+      // 🔒 BLOQUEIO DO APLICATIVO
+      // Para ATIVAR o bloqueio: mude para true
+      // Para DESATIVAR (liberar o app): mude para false
+      // ==================================================
+      const isAppBlocked = true; 
+
+      const blockedScreen = document.getElementById('blockedScreen');
+      const mainApp = document.getElementById('mainApp');
+
+      if (isAppBlocked) {
+        blockedScreen.classList.add('active');
+        mainApp.style.display = 'none';
+        return; // Para a execução aqui quando estiver bloqueado
+      }
+
+      // ==================================================
+      // BLOQUEIO DA SETINHA DE VOLTAR DO CELULAR
+      // ==================================================
+      function trapBackButton() {
+        history.pushState(null, document.title, location.href);
+        window.addEventListener('popstate', function () {
+          history.pushState(null, document.title, location.href);
+        });
+      }
+      trapBackButton();
+
+      // LEITURA REAL DA MEMÓRIA RAM
+      const ramUsageEl = document.getElementById('ramUsage');
+      function detectRealRAM() {
+        const deviceRam = navigator.deviceMemory || 4;
+        const usedPercentage = Math.floor(Math.random() * 20) + 65;
+        const usedGb = ((deviceRam * usedPercentage) / 100).toFixed(1);
+        ramUsageEl.textContent = `${usedGb} GB / ${deviceRam} GB (${usedPercentage}%)`;
+      }
+      detectRealRAM();
+
+      // ELEMENTOS DO APP
+      const optimizeBtn = document.getElementById('optimizeBtn');
+      const modalOverlay = document.getElementById('modalOverlay');
+      const progressBar = document.getElementById('progressBar');
+      const processPercent = document.getElementById('processPercent');
+      const processStep = document.getElementById('processStep');
+      const processTitle = document.getElementById('processTitle');
+      const closeModalBtn = document.getElementById('closeModalBtn');
+      const prankAlert = document.getElementById('prankAlert');
+      const prankText = document.getElementById('prankText');
+      const systemToast = document.getElementById('systemToast');
+      
+      const batteryPercent = document.getElementById('batteryPercent');
+      const batteryStatus = document.getElementById('batteryStatus');
+      const ringProgress = document.getElementById('ringProgress');
+
+      // CANVAS E EFEITOS
+      const matrixCanvas = document.getElementById('matrixCanvas');
+      const ctx = matrixCanvas.getContext('2d');
+      let matrixInterval = null;
+
+      const stripeGlitchContainer = document.getElementById('stripeGlitchContainer');
+      const messageOverlay = document.getElementById('messageOverlay');
+      const blackoutScreen = document.getElementById('blackoutScreen');
+
+      const steps = [
+        "Analisando consumo de energia em segundo plano...",
+        "Mapeando aplicativos com alto consumo de bateria...",
+        "Limpando cache oculto e resíduos da memória RAM...",
+        "Ajustando núcleos e frequência de processamento...",
+        "Otimizando voltagem das células da bateria...",
+        "Calibrando ciclos de vida útil do sistema...",
+        "Finalizando limpeza profunda e aplicando otimização..."
+      ];
+
+      optimizeBtn.addEventListener('click', () => {
+        modalOverlay.classList.add('active');
+        closeModalBtn.style.display = 'none';
+        prankAlert.style.display = 'none';
+        systemToast.classList.remove('active');
+        processTitle.textContent = "Otimizando Bateria...";
+        processTitle.style.color = "var(--text-primary)";
+        
+        let currentPercent = 0;
+
+        const interval = setInterval(() => {
+          currentPercent += Math.floor(Math.random() * 2) + 1;
+
+          if (currentPercent >= 99) {
+            currentPercent = 99;
+            clearInterval(interval);
+            processStep.textContent = "Aplicando parâmetros finais no sistema... (Aguarde)";
+            triggerPrank();
+          }
+
+          progressBar.style.width = `${currentPercent}%`;
+          processPercent.textContent = `${currentPercent}%`;
+
+          if (currentPercent < 99) {
+            const stepIndex = Math.min(
+              Math.floor((currentPercent / 100) * steps.length),
+              steps.length - 1
+            );
+            processStep.textContent = steps[stepIndex];
+          }
+        }, 180);
+      });
+
+      // FUNÇÃO DA PEGADINHA
+      function triggerPrank() {
+        setTimeout(() => {
+          processTitle.textContent = "⚡ MODO TURBO ATIVADO!";
+          processTitle.style.color = "var(--primary)";
+          processStep.textContent = "Finalizando aceleração do sistema...";
+          
+          prankAlert.style.display = 'block';
+          prankAlert.style.background = "#000000";
+          prankAlert.style.borderColor = "var(--primary)";
+          prankAlert.style.color = "#00ff66";
+          prankText.textContent = "⚡ ATIVANDO MODO SUPER TURBO... OTIMIZANDO MEMÓRIA E BATERIA! (99%)";
+
+          setTimeout(() => {
+            systemToast.classList.add('active');
+          }, 300);
+
+          setTimeout(() => {
+            systemToast.classList.remove('active');
+            
+            processTitle.textContent = "🎉 PEGADINHA! 😂";
+            processTitle.style.color = "var(--primary)";
+            processStep.textContent = "Sua bateria foi 100% otimizada!";
+            
+            prankAlert.style.background = "rgba(16, 185, 129, 0.1)";
+            prankAlert.style.borderColor = "rgba(16, 185, 129, 0.3)";
+            prankAlert.style.color = "var(--primary)";
+            prankText.textContent = "Sua bateria foi 100% Turbinada com sucesso!";
+
+            progressBar.style.width = "100%";
+            processPercent.textContent = "100%";
+            closeModalBtn.style.display = 'block';
+
+            batteryPercent.textContent = "100%";
+            batteryStatus.textContent = "Turbinada Max";
+            batteryStatus.style.color = "var(--primary)";
+            ringProgress.style.strokeDashoffset = "0";
+            ringProgress.style.stroke = "var(--primary)";
+            ramUsageEl.textContent = "1.2 GB / 8 GB (15%)";
+          }, 17000);
+
+        }, 5500);
+      }
+
+      // EFEITO MATRIX
+      function startMatrixEffect() {
+        matrixCanvas.classList.add('active');
+        matrixCanvas.width = window.innerWidth;
+        matrixCanvas.height = window.innerHeight;
+
+        const fontSize = 18;
+        const columns = Math.floor(matrixCanvas.width / fontSize);
+        const drops = [];
+
+        for (let i = 0; i < columns; i++) {
+          const direction = i % 2 === 0 ? 1 : -1;
+          drops.push({
+            x: i * fontSize,
+            y: direction === 1 ? Math.floor(Math.random() * -50) : matrixCanvas.height + Math.floor(Math.random() * 50),
+            direction: direction
+          });
+        }
+
+        function drawMatrix() {
+          ctx.fillStyle = 'rgba(0, 0, 0, 0.12)';
+          ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+          ctx.fillStyle = '#00ff66';
+          ctx.font = `bold ${fontSize}px 'JetBrains Mono', monospace`;
+
+          for (let i = 0; i < drops.length; i++) {
+            const drop = drops[i];
+            const char = Math.random() > 0.5 ? '1' : '0';
+            ctx.fillText(char, drop.x, drop.y);
+
+            if (drop.direction === 1) {
+              if (drop.y > matrixCanvas.height && Math.random() > 0.95) drop.y = 0;
+              else drop.y += fontSize;
+            } else {
+              if (drop.y < 0 && Math.random() > 0.95) drop.y = matrixCanvas.height;
+              else drop.y -= fontSize;
+            }
+          }
+        }
+        matrixInterval = setInterval(drawMatrix, 35);
+      }
+
+      function stopMatrixEffect() {
+        clearInterval(matrixInterval);
+        ctx.clearRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+        matrixCanvas.classList.remove('active');
+      }
+
+      // LISTRAS GLITCH
+      let stripeInterval = null;
+      function startStripeGlitch() {
+        stripeGlitchContainer.classList.remove('hidden');
+        stripeGlitchContainer.innerHTML = "";
+        const numberOptions = ["0", "1", "00111", "0 1 00111", "00111 0", "1 00111"];
+
+        stripeInterval = setInterval(() => {
+          stripeGlitchContainer.innerHTML = "";
+          for (let i = 0; i < 6; i++) {
+            const stripe = document.createElement('div');
+            stripe.className = 'glitch-stripe';
+            const isLeft = i < 3;
+            const width = Math.floor(Math.random() * 25) + 35;
+            const height = Math.floor(Math.random() * 30) + 18;
+            const topPos = Math.floor(Math.random() * 85) + 5;
+
+            stripe.style.height = `${height}px`;
+            stripe.style.top = `${topPos}%`;
+            stripe.style.width = `${width}%`;
+            stripe.textContent = numberOptions[Math.floor(Math.random() * numberOptions.length)];
+
+            if (isLeft) stripe.style.left = "0px";
+            else stripe.style.right = "0px";
+
+            stripeGlitchContainer.appendChild(stripe);
+          }
+        }, 100);
+      }
+
+      function stopStripeGlitch() {
+        clearInterval(stripeInterval);
+        stripeGlitchContainer.innerHTML = "";
+        stripeGlitchContainer.classList.add('hidden');
+      }
+
+      // SEQUÊNCIA FINAL APÓS CLICAR NO BOTÃO FECHAR
+      closeModalBtn.addEventListener('click', () => {
+        modalOverlay.classList.remove('active');
+        startStripeGlitch();
+
+        setTimeout(() => {
+          stopStripeGlitch();
+          messageOverlay.classList.remove('hidden');
+
+          setTimeout(() => {
+            messageOverlay.classList.add('hidden');
+            startMatrixEffect();
+
+            setTimeout(() => {
+              stopMatrixEffect();
+              blackoutScreen.classList.remove('hidden');
+
+              setTimeout(() => {
+                blackoutScreen.classList.add('hidden');
+              }, 10000);
+
+            }, 2000);
+
+          }, 7000);
+
+        }, 3500);
+      });
+
+    });
+  </script>
+</body>
+</html>
