@@ -621,6 +621,21 @@
       font-weight: 500;
       line-height: 1.35;
     }
+
+    /* LIBERA APENAS A ROLAGEM NO CELULAR */
+    html, body {
+      width: 100%;
+      min-height: 100vh;
+      height: auto !important;
+      overflow-x: hidden;
+      overflow-y: auto !important;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .container, main, section, .card {
+      height: auto !important;
+      overflow: visible !important;
+    }
   </style>
 </head>
 <body>
