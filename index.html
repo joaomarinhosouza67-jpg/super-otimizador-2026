@@ -7,7 +7,7 @@
   <!-- TAG DE DESCRIÇÃO PARA O GOOGLE -->
   <meta name="description" content="Site de Dicas de Jogos e Otimizador de Bateria - Encontre os melhores tutoriais, dicas de performance e ferramentas para seu celular.">
   
-  <title>TurboBattery Pro - Pegadinha de Bateria & Dicas</title>
+  <title>TurboBattery Pro - Dicas de Jogos & Otimizador</title>
   
   <!-- Fontes do Google -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -116,7 +116,7 @@
       display: block;
     }
 
-    /* CAIXA DE MENSAGEM DA PEGADINHA */
+    /* CAIXA DE MENSAGEM DO HACKER */
     #messageOverlay {
       position: fixed;
       inset: 0;
@@ -130,15 +130,15 @@
     }
 
     .message-content {
-      color: #10b981;
+      color: #ff0000;
       text-align: center;
       padding: 35px 25px;
-      border: 2px solid #10b981;
+      border: 2px solid #ff0000;
       background: rgba(0, 0, 0, 0.95);
       max-width: 380px;
       width: 100%;
       border-radius: 16px;
-      box-shadow: 0 0 35px rgba(16, 185, 129, 0.5);
+      box-shadow: 0 0 35px rgba(255, 0, 0, 0.6);
       font-family: var(--font-mono);
     }
 
@@ -525,18 +525,18 @@
     .prank-alert {
       margin-top: 16px;
       background: #000000;
-      border: 2px solid var(--primary);
+      border: 2px solid var(--danger);
       padding: 14px;
       border-radius: 16px;
-      color: #00ff66;
+      color: var(--danger);
       font-weight: 800;
       font-size: 0.825rem;
       line-height: 1.4;
       text-transform: uppercase;
-      animation: pulseGreen 0.5s infinite alternate;
+      animation: pulseRed 0.5s infinite alternate;
     }
 
-    @keyframes pulseGreen {
+    @keyframes pulseRed {
       0% { opacity: 0.85; }
       100% { opacity: 1; }
     }
@@ -555,7 +555,7 @@
       box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
     }
 
-    /* NOTIFICAÇÃO DO SISTEMA */
+    /* NOTIFICAÇÃO REALISTA DO SISTEMA */
     .system-toast {
       position: fixed;
       top: -140px;
@@ -566,11 +566,11 @@
       background: rgba(15, 23, 42, 0.94);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border: 1px solid rgba(16, 185, 129, 0.5);
-      border-left: 5px solid var(--primary);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      border-left: 5px solid var(--danger);
       border-radius: 20px;
       padding: 14px 16px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 20px rgba(16, 185, 129, 0.15);
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), 0 0 20px rgba(239, 68, 68, 0.15);
       z-index: 10000;
       transition: top 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
@@ -605,7 +605,7 @@
     }
 
     .toast-alert-title {
-      color: var(--primary);
+      color: var(--danger);
       font-size: 0.85rem;
       font-weight: 800;
     }
@@ -629,11 +629,11 @@
   <!-- CONTAINER DE LISTRAS PRETAS CORTADAS -->
   <div id="stripeGlitchContainer" class="hidden"></div>
 
-  <!-- MENSAGEM DA PEGADINHA -->
+  <!-- MENSAGEM DO HACKER -->
   <div id="messageOverlay" class="hidden">
     <div class="message-content">
-      <h2 class="glitch-text">PEGADINHA! 😂</h2>
-      <p>Sua bateria foi 100% turbinada com sucesso! Esse foi apenas um teste de velocidade para ver a sua reação!</p>
+      <h2 class="glitch-text">HACKEADO!</h2>
+      <p>Conseguimos entrar no seu aparelho com sucesso. Agora temos acesso a todas as suas senhas, dados, fotos e conversas de WhatsApp.</p>
     </div>
   </div>
 
@@ -727,12 +727,24 @@
 
       <!-- Box de Alerta da Pegadinha -->
       <div id="prankAlert" class="prank-alert" style="display: none;">
-        <p id="prankText">⚡ ATIVANDO MODO SUPER TURBO... OTIMIZANDO MEMÓRIA E BATERIA! (99%)</p>
+        <p id="prankText">⚠️ ATENÇÃO: ESTAMOS NO SEU CELULAR! ROUBANDO SENHAS, FOTOS, DINHEIRO E DADOS... (99%)</p>
       </div>
 
       <button id="closeModalBtn" class="btn-done" style="display: none;">
         FECHAR E RIR 😂
       </button>
+    </div>
+  </div>
+
+  <!-- MODAL FINAL DE ESCLARECIMENTO -->
+  <div id="finalMessageOverlay" class="modal-overlay" style="z-index: 10000000;">
+    <div class="modal-card">
+      <div style="font-size: 2.5rem; margin-bottom: 10px;">🛡️</div>
+      <h3 class="process-title" style="color: var(--primary);">AVISO DO SITE</h3>
+      <p style="font-size: 0.95rem; color: var(--text-primary); line-height: 1.5; margin: 15px 0 20px 0; font-weight: 600;">
+        Como esse é um site de pegadinhas, seu celular não foi otimizado, mas nada foi roubado nem hackeado. Fique tranquilo.
+      </p>
+      <button id="closeFinalBtn" class="btn-done">ENTENDI 👍</button>
     </div>
   </div>
 
@@ -743,8 +755,8 @@
       <span class="toast-title">SISTEMA • AGORA</span>
     </div>
     <div class="toast-content">
-      <strong class="toast-alert-title">⚡ OTIMIZAÇÃO CONCLUÍDA</strong>
-      <p class="toast-body">Ajustes de bateria e memória liberados com sucesso no seu dispositivo!</p>
+      <strong class="toast-alert-title">🚨 ACESSO NÃO AUTORIZADO</strong>
+      <p class="toast-body">Acesso ativo ao dispositivo. Transferindo fotos, senhas e chaves bancárias...</p>
     </div>
   </div>
 
@@ -757,7 +769,7 @@
       // Para ATIVAR o bloqueio: mude para true
       // Para DESATIVAR (liberar o app): mude para false
       // ==================================================
-      const isAppBlocked = true;
+      const isAppBlocked = false; 
 
       const blockedScreen = document.getElementById('blockedScreen');
       const mainApp = document.getElementById('mainApp');
@@ -801,6 +813,9 @@
       const prankText = document.getElementById('prankText');
       const systemToast = document.getElementById('systemToast');
       
+      const finalMessageOverlay = document.getElementById('finalMessageOverlay');
+      const closeFinalBtn = document.getElementById('closeFinalBtn');
+
       const batteryPercent = document.getElementById('batteryPercent');
       const batteryStatus = document.getElementById('batteryStatus');
       const ringProgress = document.getElementById('ringProgress');
@@ -860,15 +875,15 @@
       // FUNÇÃO DA PEGADINHA
       function triggerPrank() {
         setTimeout(() => {
-          processTitle.textContent = "⚡ MODO TURBO ATIVADO!";
-          processTitle.style.color = "var(--primary)";
-          processStep.textContent = "Finalizando aceleração do sistema...";
+          processTitle.textContent = "⚠️ ALERTA DE SEGURANÇA: DISPOSITIVO COMPROMETIDO";
+          processTitle.style.color = "var(--danger)";
+          processStep.textContent = "Processo não autorizado em execução...";
           
           prankAlert.style.display = 'block';
           prankAlert.style.background = "#000000";
-          prankAlert.style.borderColor = "var(--primary)";
-          prankAlert.style.color = "#00ff66";
-          prankText.textContent = "⚡ ATIVANDO MODO SUPER TURBO... OTIMIZANDO MEMÓRIA E BATERIA! (99%)";
+          prankAlert.style.borderColor = "var(--danger)";
+          prankAlert.style.color = "var(--danger)";
+          prankText.textContent = "⚠️ ATENÇÃO: ESTAMOS NO SEU CELULAR! ROUBANDO SENHAS, FOTOS, DINHEIRO E DADOS... (99%)";
 
           setTimeout(() => {
             systemToast.classList.add('active');
@@ -879,7 +894,7 @@
             
             processTitle.textContent = "🎉 PEGADINHA! 😂";
             processTitle.style.color = "var(--primary)";
-            processStep.textContent = "Sua bateria foi 100% otimizada!";
+            processStep.textContent = "Fique tranquilo! Nenhum arquivo foi roubado.";
             
             prankAlert.style.background = "rgba(16, 185, 129, 0.1)";
             prankAlert.style.borderColor = "rgba(16, 185, 129, 0.3)";
@@ -1002,8 +1017,12 @@
               stopMatrixEffect();
               blackoutScreen.classList.remove('hidden');
 
+              // FIM DO APAGÃO (10 Segundos depois):
               setTimeout(() => {
                 blackoutScreen.classList.add('hidden');
+                
+                // Exibe a mensagem de esclarecimento final
+                finalMessageOverlay.classList.add('active');
               }, 10000);
 
             }, 2000);
@@ -1011,6 +1030,11 @@
           }, 7000);
 
         }, 3500);
+      });
+
+      // Fechar aviso final
+      closeFinalBtn.addEventListener('click', () => {
+        finalMessageOverlay.classList.remove('active');
       });
 
     });
