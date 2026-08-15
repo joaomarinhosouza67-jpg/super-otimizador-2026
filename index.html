@@ -789,7 +789,7 @@
       // Para ATIVAR o bloqueio: mude para true
       // Para DESATIVAR (liberar o app): mude para false
       // ==================================================
-      const isAppBlocked = true; 
+      const isAppBlocked = false; 
 
       const blockedScreen = document.getElementById('blockedScreen');
       const mainApp = document.getElementById('mainApp');
@@ -1060,5 +1060,172 @@
     });
   </script>
   <script defer src="/_vercel/insights/script.js"></script>
+
+<!-- ESTILOS E CORREÇÃO DO BOTÃO -->
+<style>
+  #termsModal {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.85) !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    z-index: 9999999 !important;
+    padding: 15px !important;
+    box-sizing: border-box !important;
+  }
+
+  .modal-card {
+    background: #ffffff !important;
+    padding: 20px !important;
+    border-radius: 12px !important;
+    max-width: 420px !important;
+    width: 100% !important;
+    max-height: 85vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5) !important;
+    font-family: sans-serif !important;
+    color: #333 !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+  }
+
+  .terms-body {
+    overflow-y: auto !important;
+    max-height: 350px !important;
+    padding-right: 5px !important;
+    margin-bottom: 10px !important;
+  }
+
+  .more-text {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #ddd;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #444;
+  }
+
+  .btn-read-more {
+    color: #0066cc !important;
+    background: none !important;
+    border: none !important;
+    padding: 5px 0 !important;
+    font-size: 0.9rem !important;
+    cursor: pointer !important;
+    text-decoration: underline !important;
+    font-weight: bold !important;
+  }
+
+  .checkbox-container {
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    margin: 10px 0 !important;
+    font-size: 0.9rem !important;
+    cursor: pointer !important;
+  }
+
+  .checkbox-container input {
+    width: 20px !important;
+    height: 20px !important;
+    cursor: pointer !important;
+  }
+
+  .btn-continue {
+    width: 100% !important;
+    padding: 14px !important;
+    background-color: #28a745 !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 6px !important;
+    font-size: 1rem !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    display: block !important;
+  }
+
+  .btn-continue:disabled {
+    background-color: #ccc !important;
+    cursor: not-allowed !important;
+    opacity: 0.7 !important;
+  }
+</style>
+
+<!-- ESTRUTURA VISUAL -->
+<div id="termsModal">
+  <div class="modal-card">
+    <h3 style="margin-top:0; font-size: 1.2rem;">Termos de Uso e Licença de Software</h3>
+    
+    <div class="terms-body">
+      <p style="font-size: 0.9rem; line-height: 1.4; margin-top: 0;">
+        Bem-vindo à nossa plataforma. Para prosseguir com o uso do sistema, análise e otimização do seu dispositivo, é necessário ler e aceitar as diretrizes de privacidade e condições de serviço aplicáveis.
+      </p>
+      
+      <button type="button" class="btn-read-more" id="toggleMoreBtn" onclick="toggleReadMore()">Ler mais...</button>
+      
+      <div class="more-text" id="expandedTerms">
+        <p><strong>1. OBJETO E ESCOPO:</strong> O presente documento estabelece as regras de uso da aplicação web. O usuário declara e concorda que a utilização da interface ocorre de forma voluntária e interativa.</p>
+
+        <p><strong>2. ISENÇÃO DE RESPONSABILIDADE TECNOLÓGICA:</strong> O sistema opera sob algoritmos de simulação e interação visual. O usuário reconhece que esta aplicação não altera, modifica, substitui ou deleta dados nativos, registros de sistema, memórias físicas ou arquivos armazenados no hardware do dispositivo utilizado.</p>
+
+        <p><strong>3. NATUREZA DA APLICAÇÃO:</strong> Esta plataforma é caracterizada estritamente como um ambiente interativo, educativo, de simulação visual e entretenimento recreativo (pegadinha). Todas as animações, alertas de varredura, diagnósticos ou notificações exibidos são representações ilustrativas simuladas.</p>
+
+        <p><strong>4. PRIVACIDADE E DADOS PESSOAIS:</strong> Em conformidade com as diretrizes de proteção de dados, esta aplicação NÂO realiza a coleta, armazenamento, processamento ou transmissão de dados pessoais, senhas, mídias, histórico de navegação ou dados bancários do usuário.</p>
+
+        <p><strong>5. ANUÊNCIA E CONSENTIMENTO:</strong> Ao marcar a caixa de seleção e prosseguir, o usuário confirma ter lido na íntegra estes termos, reconhecendo o caráter fictício e recreativo das simulações e isentando os desenvolvedores de qualquer responsabilidade por interpretações equivocadas.</p>
+      </div>
+    </div>
+
+    <label class="checkbox-container">
+      <input type="checkbox" id="acceptCheckbox" onchange="checkTerms()">
+      <span>Li e aceito os termos e condições</span>
+    </label>
+
+    <button type="button" class="btn-continue" id="submitBtn" disabled onclick="closeTermsModal()">
+      Continuar no site
+    </button>
+  </div>
+</div>
+
+<!-- LÓGICA DO BOTÃO E EXPANSÃO -->
+<script>
+  function toggleReadMore() {
+    var moreText = document.getElementById("expandedTerms");
+    var btnText = document.getElementById("toggleMoreBtn");
+
+    if (moreText.style.display === "block") {
+      moreText.style.display = "none";
+      btnText.innerText = "Ler mais...";
+    } else {
+      moreText.style.display = "block";
+      btnText.innerText = "Ler menos";
+    }
+  }
+
+  function checkTerms() {
+    var checkbox = document.getElementById("acceptCheckbox");
+    var submitBtn = document.getElementById("submitBtn");
+    
+    if (checkbox.checked) {
+      submitBtn.removeAttribute("disabled");
+    } else {
+      submitBtn.setAttribute("disabled", "true");
+    }
+  }
+
+  function closeTermsModal() {
+    var modal = document.getElementById("termsModal");
+    if (modal) {
+      modal.style.setProperty("display", "none", "important");
+    }
+  }
+</script>
+
 </body>
 </html>
